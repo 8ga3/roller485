@@ -76,11 +76,11 @@ types:
     doc: 各種設定・制御コマンドの送受信で使われる標準的な12バイトのペイロード
     seq:
       - id: data1
-        size: 4
+        type: s4
       - id: data2
-        size: 4
+        type: s4
       - id: data3
-        size: 4
+        type: s4
 
   readback_req:
     doc: ステータス読み出しのリクエストペイロード (1バイト)

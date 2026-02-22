@@ -402,9 +402,9 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
             self._root = _root
 
         def _read(self):
-            self.data1 = self._io.read_bytes(4)
-            self.data2 = self._io.read_bytes(4)
-            self.data3 = self._io.read_bytes(4)
+            self.data1 = self._io.read_s4le()
+            self.data2 = self._io.read_s4le()
+            self.data3 = self._io.read_s4le()
             self._dirty = False
 
 
@@ -414,18 +414,12 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
         def _write__seq(self, io=None):
             super(UnitRoller485Protocol.ConfigPayload, self)._write__seq(io)
-            self._io.write_bytes(self.data1)
-            self._io.write_bytes(self.data2)
-            self._io.write_bytes(self.data3)
+            self._io.write_s4le(self.data1)
+            self._io.write_s4le(self.data2)
+            self._io.write_s4le(self.data3)
 
 
         def _check(self):
-            if len(self.data1) != 4:
-                raise kaitaistruct.ConsistencyError(u"data1", 4, len(self.data1))
-            if len(self.data2) != 4:
-                raise kaitaistruct.ConsistencyError(u"data2", 4, len(self.data2))
-            if len(self.data3) != 4:
-                raise kaitaistruct.ConsistencyError(u"data3", 4, len(self.data3))
             self._dirty = False
 
 
