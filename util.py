@@ -569,3 +569,287 @@ class Roller485Util(rs.RS485):
             "rs485_bps": resp.payload.rs485_bps,
             "button_switch_mode": resp.payload.button_switch_mode,
         }
+
+    def _send_read_i2c(
+        self, addr: int, reg_len: int, reg_addr: int, data_len: int
+    ) -> None:
+        """I2Cレジスタの読み取り要求を送信する
+
+        Args:
+            addr (int): I2Cアドレス
+            reg_len (int): レジスタの長さ (0: 1byte address, 1: 2byte address)
+            reg_addr (int): レジスタのアドレス
+            data_len (int): 読み取るデータの長さ (0-16)
+        """
+        command = Proto.CommandCode.i2c_read_register
+        reg_len = max(0, min(1, addr))
+        data_len = max(0, min(16, data_len))
+
+        length = self.get_packet_length(command.value)
+        _io = KaitaiStream(io.BytesIO(bytes(length)))
+
+        prot = Proto(_io)
+        prot.first_byte = command
+        prot.device_id = self.target
+        prot.crc8 = 0  # 後で正しい値を計算
+
+        payload = Proto.I2cReadRegReq(None, prot, prot._root)
+        payload.i2c_address = addr
+        payload.register_address_length = reg_len
+        payload.register_address = reg_addr
+        payload.data_length = data_len
+        payload._check()
+
+        prot.payload = payload
+        prot._check()
+
+        prot._write()
+
+        self.replace_crc8(prot)
+        output = _io.to_byte_array()
+        self.write(output)
+
+    def _send_read_i2c_resp(self) -> bytes:
+        """I2Cレジスタの読み取り応答を受信する
+
+        Returns:
+            bytes: 読み取ったデータ
+        """
+        command = Proto.CommandCode.i2c_read_register_resp
+        msg = self.read(self.get_packet_length(command.value))
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8 or resp.payload.read_status != 1:
+            return bytes()
+        length: int = resp.payload.data_length
+        data: bytes = resp.payload.data
+        return data[:length]
+
+    def read_i2c(self, addr: int, reg_len: int, reg_addr: int, data_len: int) -> bytes:
+        """I2Cレジスタの読み取り
+
+        Args:
+            addr (int): I2Cアドレス
+            reg_len (int): レジスタの長さ (0: 1byte address, 1: 2byte address)
+            reg_addr (int): レジスタのアドレス
+            data_len (int): 読み取るデータの長さ (0-16)
+
+        Returns:
+            bytes: 読み取ったデータ
+        """
+        self._send_read_i2c(addr, reg_len, reg_addr, data_len)
+        self._delay()
+        return self._send_read_i2c_resp()
+
+    def _send_write_i2c(
+        self, addr: int, reg_len: int, reg_addr: int, data: bytes
+    ) -> None:
+        """I2Cレジスタの書き込み要求を送信する
+
+        Args:
+            addr (int): I2Cアドレス
+            reg_len (int): レジスタの長さ (0: 1byte address, 1: 2byte address)
+            reg_addr (int): レジスタのアドレス
+            data (bytes): 書き込むデータ (0-16)
+        """
+        command = Proto.CommandCode.i2c_write_register
+        reg_len = max(0, min(1, addr))
+        data_len = min(16, len(data))
+
+        # dataが16byteになるように調整
+        if len(data) > 16:
+            data = data[:16]
+        elif len(data) < 16:
+            data = data + bytes(16 - len(data))
+
+        length = self.get_packet_length(command.value)
+        _io = KaitaiStream(io.BytesIO(bytes(length)))
+
+        prot = Proto(_io)
+        prot.first_byte = command
+        prot.device_id = self.target
+        prot.crc8 = 0  # 後で正しい値を計算
+
+        payload = Proto.I2cWriteRegReq(None, prot, prot._root)
+        payload.i2c_address = addr
+        payload.register_address_length = reg_len
+        payload.register_address = reg_addr
+        payload.data_length = data_len
+        payload.reserve = bytes(1)  # 0うめ
+        payload.data = data
+        payload._check()
+
+        prot.payload = payload
+        prot._check()
+
+        prot._write()
+
+        self.replace_crc8(prot)
+        output = _io.to_byte_array()
+        self.write(output)
+
+    def _send_write_i2c_resp(self) -> bool:
+        """I2Cレジスタの書き込み応答を受信する
+
+        Returns:
+            bool: 書き込み成功かどうか
+        """
+        command = Proto.CommandCode.i2c_write_register_resp
+        msg = self.read(self.get_packet_length(command.value))
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8 or resp.payload.write_status != 1:
+            return False
+        return True
+
+    def write_i2c(self, addr: int, reg_len: int, reg_addr: int, data: bytes) -> bool:
+        """I2Cレジスタの書き込み
+
+        Args:
+            addr (int): I2Cアドレス
+            reg_len (int): レジスタの長さ (0: 1byte address, 1: 2byte address)
+            reg_addr (int): レジスタのアドレス
+            data (bytes): 書き込むデータ (0-16)
+
+        Returns:
+            bool: 書き込み成功かどうか
+        """
+        self._send_write_i2c(addr, reg_len, reg_addr, data)
+        self._delay()
+        return self._send_write_i2c_resp()
+
+    def _send_read_i2c_raw(self, addr: int, data_len: int) -> None:
+        """I2Cローデータの読み取り要求を送信する
+
+        Args:
+            addr (int): I2Cアドレス
+            data_len (int): 読み取るデータの長さ (0-16)
+        """
+        command = Proto.CommandCode.i2c_read_raw
+        data_len = max(0, min(16, data_len))
+
+        length = self.get_packet_length(command.value)
+        _io = KaitaiStream(io.BytesIO(bytes(length)))
+
+        prot = Proto(_io)
+        prot.first_byte = command
+        prot.device_id = self.target
+        prot.crc8 = 0  # 後で正しい値を計算
+
+        payload = Proto.I2cReadRawReq(None, prot, prot._root)
+        payload.i2c_address = addr
+        payload._check()
+
+        prot.payload = payload
+        prot._check()
+
+        prot._write()
+
+        self.replace_crc8(prot)
+        output = _io.to_byte_array()
+        self.write(output)
+
+    def _send_read_i2c_raw_resp(self) -> bytes:
+        """I2Cローデータの読み取り応答を受信する
+
+        Returns:
+            bytes: 読み取ったデータ
+        """
+        command = Proto.CommandCode.i2c_read_raw_resp
+        msg = self.read(self.get_packet_length(command.value))
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8 or resp.payload.read_status != 1:
+            return bytes()
+        length: int = resp.payload.data_length
+        data: bytes = resp.payload.data
+        return data[:length]
+
+    def read_i2c_raw(self, addr: int, data_len: int) -> bytes:
+        """I2Cローデータの読み取り
+
+        Args:
+            addr (int): I2Cアドレス
+            data_len (int): 読み取るデータの長さ (0-16)
+
+        Returns:
+            bytes: 読み取ったデータ
+        """
+        self._send_read_i2c_raw(addr, data_len)
+        self._delay()
+        return self._send_read_i2c_raw_resp()
+
+    def _send_write_i2c_raw(self, addr: int, stop_bit: int, data: bytes) -> None:
+        """I2Cローデータの書き込み要求を送信する
+
+        Args:
+            addr (int): I2Cアドレス
+            stop_bit (int): ストップ・コンディション (0: なし, 1: あり)
+            data (bytes): 書き込むデータ (0-16)
+        """
+        command = Proto.CommandCode.i2c_write_raw
+        data_len = max(0, min(16, len(data)))
+
+        # dataが16byteになるように調整
+        if len(data) > 16:
+            data = data[:16]
+        elif len(data) < 16:
+            data = data + bytes(16 - len(data))
+
+        length = self.get_packet_length(command.value)
+        _io = KaitaiStream(io.BytesIO(bytes(length)))
+
+        prot = Proto(_io)
+        prot.first_byte = command
+        prot.device_id = self.target
+        prot.crc8 = 0  # 後で正しい値を計算
+
+        payload = Proto.I2cWriteRawReq(None, prot, prot._root)
+        payload.i2c_address = addr
+        payload.data_length = data_len
+        payload.stop_bit = stop_bit
+        payload.reserve = bytes(3)  # 0うめ
+        payload.data = data
+        payload._check()
+
+        prot.payload = payload
+        prot._check()
+
+        prot._write()
+
+        self.replace_crc8(prot)
+        output = _io.to_byte_array()
+        self.write(output)
+
+    def _send_write_i2c_raw_resp(self) -> bool:
+        """I2Cローデータの書き込み応答を受信する
+
+        Returns:
+            bool: 書き込み成功かどうか
+        """
+        command = Proto.CommandCode.i2c_write_raw_resp
+        msg = self.read(self.get_packet_length(command.value))
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8 or resp.payload.write_status != 1:
+            return False
+        return True
+
+    def write_i2c_raw(self, addr: int, stop_bit: int, data: bytes) -> bool:
+        """I2Cローデータの書き込み
+
+        Args:
+            addr (int): I2Cアドレス
+            stop_bit (int): ストップ・コンディション (0: なし, 1: あり)
+            data (bytes): 書き込むデータ (0-16)
+
+        Returns:
+            bool: 書き込み成功かどうか
+        """
+        self._send_write_i2c_raw(addr, stop_bit, data)
+        self._delay()
+        return self._send_write_i2c_raw_resp()
