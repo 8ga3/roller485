@@ -100,11 +100,8 @@ class Roller485Util(rs.RS485):
         prot._io.write_bytes(binary)
 
     def _delay(self):
+        """内部処理のウェイト"""
         time.sleep(0.05)
-
-    class Switch(IntEnum):
-        Off = 0
-        On = 1
 
     def _setting(
         self, command: Proto.CommandCode, data1: int, data2: int = 0, data3: int = 0
@@ -166,11 +163,18 @@ class Roller485Util(rs.RS485):
             and resp.payload.data3 == data3
         )
 
+    class Switch(IntEnum):
+        Off = 0
+        On = 1
+
     def motor_switch(self, state: Switch) -> bool:
         """モーターON/OFF
 
         Args:
             state (Switch): 1でON、0でOFF
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         self._setting(Proto.CommandCode.motor_switch, data1=state.value)
         self._delay()
@@ -184,23 +188,29 @@ class Roller485Util(rs.RS485):
         Current = 3
         Encoder = 4
 
-    def mode_setting(self, mode: MotorMode) -> None:
+    def mode_setting(self, mode: MotorMode) -> bool:
         """モード設定
 
         フラッシュに保存されます。
 
         Args:
             mode (MotorMode): 設定するモード
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         self._setting(Proto.CommandCode.mode_setting, data1=mode.value)
         self._delay()
         return self._setting_resp(Proto.CommandCode.mode_setting_resp, data1=mode.value)
 
-    def remove_protection(self, status: int) -> None:
+    def remove_protection(self, status: int) -> bool:
         """保護解除
 
         Args:
             status (int): 保護解除のステータス
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         status = max(0, min(255, status))
         self._setting(Proto.CommandCode.remove_protection, data2=status)
@@ -209,17 +219,24 @@ class Roller485Util(rs.RS485):
             Proto.CommandCode.remove_protection_resp, data2=status
         )
 
-    def save_to_flash(self) -> None:
-        """フラッシュメモリに保存"""
+    def save_to_flash(self) -> bool:
+        """フラッシュメモリに保存
+
+        Returns:
+            bool: コマンドが成功したかどうか
+        """
         self._setting(Proto.CommandCode.save_to_flash, data1=1)
         self._delay()
         return self._setting_resp(Proto.CommandCode.save_to_flash_resp, data1=1)
 
-    def set_encoder(self, value: int) -> None:
+    def set_encoder(self, value: int) -> bool:
         """エンコーダの設定
 
         Args:
             value (int): エンコーダの値
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         self._setting(Proto.CommandCode.encoder, data1=value)
         self._delay()
@@ -229,11 +246,14 @@ class Roller485Util(rs.RS485):
         Off = 0
         On = 1  # Press and hold for 5S to switch modes in running mode.
 
-    def button_switching_mode(self, mode: ButtonMode) -> None:
+    def button_switching_mode(self, mode: ButtonMode) -> bool:
         """ボタンの切り替えモード設定
 
         Args:
             mode (ButtonMode): 設定するモード
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         self._setting(Proto.CommandCode.button_switch_mode, data1=mode.value)
         self._delay()
@@ -248,7 +268,7 @@ class Roller485Util(rs.RS485):
         b: int = 0,
         mode: int = 0,
         brightness: int = 100,
-    ) -> None:
+    ) -> bool:
         """LEDの制御
 
         フラッシュに保存されます。
@@ -259,6 +279,9 @@ class Roller485Util(rs.RS485):
             b (int, optional): 青の値. Defaults to 0.
             mode (int, optional): モード. Defaults to 0. 0: Default system state display, 1: User-defined control
             brightness (int, optional): 明るさ(0〜100). Defaults to 100.
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         # RGB値を0〜255にクリップ
         r = max(0, min(255, r))
@@ -279,13 +302,16 @@ class Roller485Util(rs.RS485):
         Baud19200 = 1
         Baud9600 = 2
 
-    def set_rs485_baud_rate(self, baud_rate: RS485BaudRate) -> None:
+    def set_rs485_baud_rate(self, baud_rate: RS485BaudRate) -> bool:
         """RS485のボーレート設定
 
         フラッシュに保存されます。
 
         Args:
             baud_rate (RS485BaudRate): 設定するボーレート
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         self._setting(Proto.CommandCode.rs485_baud_rate, data1=baud_rate.value)
         self._delay()
@@ -293,24 +319,30 @@ class Roller485Util(rs.RS485):
             Proto.CommandCode.rs485_baud_rate_resp, data1=baud_rate.value
         )
 
-    def set_device_id(self, device_id: int) -> None:
+    def set_device_id(self, device_id: int) -> bool:
         """デバイスIDの設定
 
         フラッシュに保存されます。
 
         Args:
             device_id (int): 設定するデバイスID
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         device_id = max(0, min(255, device_id))
         self._setting(Proto.CommandCode.device_id, data1=device_id)
         self._delay()
         return self._setting_resp(Proto.CommandCode.device_id_resp, data1=device_id)
 
-    def set_motor_jam_protection(self, enable: bool) -> None:
+    def set_motor_jam_protection(self, enable: bool) -> bool:
         """モータジャム保護の設定
 
         Args:
             enable (bool): False: 無効, True: 有効
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         enable = 1 if enable else 0
         self._setting(Proto.CommandCode.motor_jam_protection, data1=enable)
@@ -319,7 +351,7 @@ class Roller485Util(rs.RS485):
             Proto.CommandCode.motor_jam_protection_resp, data1=enable
         )
 
-    def set_motor_position_over_range_protection(self, enable: bool) -> None:
+    def set_motor_position_over_range_protection(self, enable: bool) -> bool:
         """モータ位置オーバーレンジ保護の設定
 
         スピードモード設定
@@ -328,6 +360,9 @@ class Roller485Util(rs.RS485):
 
         Args:
             enable (bool): False: 無効, True: 有効
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         enable = 1 if enable else 0
         self._setting(
@@ -338,7 +373,7 @@ class Roller485Util(rs.RS485):
             Proto.CommandCode.motor_position_over_range_protection_resp, data1=enable
         )
 
-    def set_speed_and_max_current(self, speed: int, max_current: float) -> None:
+    def set_speed_and_max_current(self, speed: int, max_current: float) -> bool:
         """モータ速度と最大電流の設定
 
         スピードモード設定
@@ -346,6 +381,9 @@ class Roller485Util(rs.RS485):
         Args:
             speed (int): 設定する速度 (-21000000-21000000) [RPM]
             max_current (float): 設定する最大電流 (-1200-1200) [mA]
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         speed = max(-21_000_000, min(21_000_000, speed)) * 100
         max_current_int: int = int(max(-1200, min(1200, max_current))) * 100
@@ -359,7 +397,7 @@ class Roller485Util(rs.RS485):
             data2=max_current_int,
         )
 
-    def set_speed_pid(self, p: float, i: float, d: float) -> None:
+    def set_speed_pid(self, p: float, i: float, d: float) -> bool:
         """モータ速度PIDの設定
 
         スピードモード設定
@@ -370,6 +408,9 @@ class Roller485Util(rs.RS485):
             p (float): 設定するP値
             i (float): 設定するI値
             d (float): 設定するD値
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         int_p: int = int(p * 100_000)
         int_i: int = int(i * 100_000)
@@ -385,7 +426,7 @@ class Roller485Util(rs.RS485):
             data3=int_d,
         )
 
-    def set_position_and_max_current(self, position: int, max_current: float) -> None:
+    def set_position_and_max_current(self, position: int, max_current: float) -> bool:
         """モータ位置と最大電流の設定
 
         ポジションモード設定
@@ -393,6 +434,9 @@ class Roller485Util(rs.RS485):
         Args:
             position (int): 設定する位置 (-21000000-21000000) [counts]
             max_current (float): 設定する最大電流 (-1200-1200) [mA]
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         position = max(-21_000_000, min(21_000_000, position)) * 100
         max_current_int: int = int(max(-1200, min(1200, max_current))) * 100
@@ -408,7 +452,7 @@ class Roller485Util(rs.RS485):
             data2=max_current_int,
         )
 
-    def set_position_pid(self, p: float, i: float, d: float) -> None:
+    def set_position_pid(self, p: float, i: float, d: float) -> bool:
         """モータ位置PIDの設定
 
         ポジションモード設定
@@ -419,6 +463,9 @@ class Roller485Util(rs.RS485):
             p (float): 設定するP値
             i (float): 設定するI値
             d (float): 設定するD値
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         int_p: int = int(p * 100_000)
         int_i: int = int(i * 100_000)
@@ -434,13 +481,16 @@ class Roller485Util(rs.RS485):
             data3=int_d,
         )
 
-    def set_current(self, current: float) -> None:
+    def set_current(self, current: float) -> bool:
         """モータ電流の設定
 
         電流モード設定
 
         Args:
             current (float): 設定する電流 (-1200-1200) [mA]
+
+        Returns:
+            bool: コマンドが成功したかどうか
         """
         current_int: int = int(max(-1200, min(1200, current)) * 100)
         self._setting(Proto.CommandCode.current_control, data1=current_int)
@@ -450,6 +500,12 @@ class Roller485Util(rs.RS485):
         )
 
     def _send_readback(self, command: Proto.CommandCode, read_flag: int = 0) -> None:
+        """リードバックコマンドを送信
+
+        Args:
+            command (Proto.CommandCode): 送信するコマンド
+            read_flag (int, optional): リードフラグ。0のみ
+        """
         length = self.get_packet_length(command.value)
         _io = KaitaiStream(io.BytesIO(bytes(length)))
 
@@ -472,10 +528,10 @@ class Roller485Util(rs.RS485):
         self.write(output)
 
     def get_motor_status(self) -> dict:
-        """モータの状態を読み取る
+        """モータの状態を読み取り
 
-        Args:
-            dict
+        Returns:
+            dict: モータの状態
         """
         self._send_readback(Proto.CommandCode.motor_status_readback)
         self._delay()
@@ -498,10 +554,10 @@ class Roller485Util(rs.RS485):
         }
 
     def get_other_status(self) -> dict:
-        """その他の状態を読み取る
+        """その他の状態を読み取り
 
-        Args:
-            dict
+        Returns:
+            dict: その他の状態
         """
         self._send_readback(Proto.CommandCode.other_status_readback)
         self._delay()
@@ -523,10 +579,10 @@ class Roller485Util(rs.RS485):
         }
 
     def get_speed_pid_and_rgb(self) -> dict:
-        """PIDとRGBの状態を読み取る
+        """PIDとRGBの状態を読み取り
 
-        Args:
-            dict
+        Returns:
+            dict: PIDとRGBの状態
         """
         self._send_readback(Proto.CommandCode.readback_2)
         self._delay()
@@ -547,10 +603,10 @@ class Roller485Util(rs.RS485):
         }
 
     def get_position_pid_and_other(self) -> dict:
-        """位置とIDの状態を読み取る
+        """位置とIDの状態を読み取り
 
-        Args:
-            dict
+        Returns:
+            dict: 位置とIDの状態
         """
         self._send_readback(Proto.CommandCode.readback_3)
         self._delay()
@@ -573,7 +629,7 @@ class Roller485Util(rs.RS485):
     def _send_read_i2c(
         self, addr: int, reg_len: int, reg_addr: int, data_len: int
     ) -> None:
-        """I2Cレジスタの読み取り要求を送信する
+        """I2Cレジスタの読み取り要求を送信
 
         Args:
             addr (int): I2Cアドレス
@@ -610,7 +666,7 @@ class Roller485Util(rs.RS485):
         self.write(output)
 
     def _send_read_i2c_resp(self) -> bytes:
-        """I2Cレジスタの読み取り応答を受信する
+        """I2Cレジスタの読み取り応答を受信
 
         Returns:
             bytes: 読み取ったデータ
@@ -645,7 +701,7 @@ class Roller485Util(rs.RS485):
     def _send_write_i2c(
         self, addr: int, reg_len: int, reg_addr: int, data: bytes
     ) -> None:
-        """I2Cレジスタの書き込み要求を送信する
+        """I2Cレジスタの書き込み要求を送信
 
         Args:
             addr (int): I2Cアドレス
@@ -690,7 +746,7 @@ class Roller485Util(rs.RS485):
         self.write(output)
 
     def _send_write_i2c_resp(self) -> bool:
-        """I2Cレジスタの書き込み応答を受信する
+        """I2Cレジスタの書き込み応答を受信
 
         Returns:
             bool: 書き込み成功かどうか
@@ -721,7 +777,7 @@ class Roller485Util(rs.RS485):
         return self._send_write_i2c_resp()
 
     def _send_read_i2c_raw(self, addr: int, data_len: int) -> None:
-        """I2Cローデータの読み取り要求を送信する
+        """I2Cローデータの読み取り要求を送信
 
         Args:
             addr (int): I2Cアドレス
@@ -752,7 +808,7 @@ class Roller485Util(rs.RS485):
         self.write(output)
 
     def _send_read_i2c_raw_resp(self) -> bytes:
-        """I2Cローデータの読み取り応答を受信する
+        """I2Cローデータの読み取り応答を受信
 
         Returns:
             bytes: 読み取ったデータ
@@ -783,7 +839,7 @@ class Roller485Util(rs.RS485):
         return self._send_read_i2c_raw_resp()
 
     def _send_write_i2c_raw(self, addr: int, stop_bit: int, data: bytes) -> None:
-        """I2Cローデータの書き込み要求を送信する
+        """I2Cローデータの書き込み要求を送信
 
         Args:
             addr (int): I2Cアドレス
@@ -825,7 +881,7 @@ class Roller485Util(rs.RS485):
         self.write(output)
 
     def _send_write_i2c_raw_resp(self) -> bool:
-        """I2Cローデータの書き込み応答を受信する
+        """I2Cローデータの書き込み応答を受信
 
         Returns:
             bool: 書き込み成功かどうか
