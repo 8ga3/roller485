@@ -448,3 +448,124 @@ class Roller485Util(rs.RS485):
         return self._setting_resp(
             Proto.CommandCode.current_control_resp, data1=current_int
         )
+
+    def _send_readback(self, command: Proto.CommandCode, read_flag: int = 0) -> None:
+        length = self.get_packet_length(command.value)
+        _io = KaitaiStream(io.BytesIO(bytes(length)))
+
+        prot = Proto(_io)
+        prot.first_byte = command
+        prot.device_id = self.target
+        prot.crc8 = 0  # 後で正しい値を計算
+
+        payload = Proto.ReadbackReq(None, prot, prot._root)
+        payload.read_flag = read_flag
+        payload._check()
+
+        prot.payload = payload
+        prot._check()
+
+        prot._write()
+
+        self.replace_crc8(prot)
+        output = _io.to_byte_array()
+        self.write(output)
+
+    def get_motor_status(self) -> dict:
+        """モータの状態を読み取る
+
+        Args:
+            dict
+        """
+        self._send_readback(Proto.CommandCode.motor_status_readback)
+        self._delay()
+
+        msg = self.read(
+            self.get_packet_length(Proto.CommandCode.motor_status_readback.value)
+        )
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8:
+            return {}
+        return {
+            "speed": resp.payload.speed / 100,
+            "position": resp.payload.position / 100,
+            "current": resp.payload.current / 100,
+            "mode": resp.payload.mode,
+            "status": resp.payload.status,
+            "error": resp.payload.error,
+        }
+
+    def get_other_status(self) -> dict:
+        """その他の状態を読み取る
+
+        Args:
+            dict
+        """
+        self._send_readback(Proto.CommandCode.other_status_readback)
+        self._delay()
+
+        msg = self.read(
+            self.get_packet_length(Proto.CommandCode.other_status_readback.value)
+        )
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8:
+            return {}
+        return {
+            "vin": resp.payload.vin_x100 / 100,
+            "temp": resp.payload.temp,
+            "encoder_counter": resp.payload.encoder_counter,
+            "rgb_mode": resp.payload.rgb_mode,
+            "rgb_brightness": resp.payload.rgb_brightness,
+        }
+
+    def get_speed_pid_and_rgb(self) -> dict:
+        """PIDとRGBの状態を読み取る
+
+        Args:
+            dict
+        """
+        self._send_readback(Proto.CommandCode.readback_2)
+        self._delay()
+
+        msg = self.read(self.get_packet_length(Proto.CommandCode.readback_2_resp.value))
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8:
+            return {}
+        return {
+            "speed_p": resp.payload.speed_p / 100_000,
+            "speed_i": resp.payload.speed_i / 100_000,
+            "speed_d": resp.payload.speed_d / 100_000,
+            "rgb_b": resp.payload.rgb_b,
+            "rgb_g": resp.payload.rgb_g,
+            "rgb_r": resp.payload.rgb_r,
+        }
+
+    def get_position_pid_and_other(self) -> dict:
+        """位置とIDの状態を読み取る
+
+        Args:
+            dict
+        """
+        self._send_readback(Proto.CommandCode.readback_3)
+        self._delay()
+
+        msg = self.read(self.get_packet_length(Proto.CommandCode.readback_3_resp.value))
+        resp = Proto(KaitaiStream(io.BytesIO(msg)))
+        resp._read()
+        crc8 = self.calculate_crc8(msg[2:-1])
+        if crc8 != resp.crc8:
+            return {}
+        return {
+            "position_p": resp.payload.position_p / 100_000,
+            "position_i": resp.payload.position_i / 100_000,
+            "position_d": resp.payload.position_d / 100_000,
+            "rs485_id": resp.payload.rs485_id,
+            "rs485_bps": resp.payload.rs485_bps,
+            "button_switch_mode": resp.payload.button_switch_mode,
+        }
