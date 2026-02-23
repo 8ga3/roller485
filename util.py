@@ -5,7 +5,7 @@ from enum import IntEnum
 import serial.rs485 as rs
 from kaitaistruct import KaitaiStream
 
-from .protocol.unit_roller485_protocol import UnitRoller485Protocol as Proto
+from .roller485_protocol import Roller485Protocol as Proto
 
 
 class Roller485Util(rs.RS485):

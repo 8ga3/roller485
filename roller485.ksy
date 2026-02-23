@@ -1,5 +1,5 @@
 meta:
-  id: unit_roller485_protocol
+  id: roller485_protocol
   title: M5Stack Unit-Roller485 RS485 Protocol (Requests and Responses)
   endian: le
 

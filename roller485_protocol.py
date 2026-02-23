@@ -9,7 +9,7 @@ from enum import IntEnum
 if getattr(kaitaistruct, 'API_VERSION', (0, 9)) < (0, 11):
     raise Exception("Incompatible Kaitai Struct Python API: 0.11 or later is required, but you have %s" % (kaitaistruct.__version__))
 
-class UnitRoller485Protocol(ReadWriteKaitaiStruct):
+class Roller485Protocol(ReadWriteKaitaiStruct):
     """M5Stack Unit-Roller485用の通信プロトコルパーサーです。
     1つの定義ファイルで「送信(リクエスト)フレーム」と「返信(レスポンス)フレーム」の両方に対応しています。
     ストリームの最初のバイトを読み取り、0xAAであればレスポンスとして、そうでなければリクエストとして処理します。
@@ -65,7 +65,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
         i2c_read_raw_resp = 114
         i2c_write_raw_resp = 115
     def __init__(self, _io=None, _parent=None, _root=None):
-        super(UnitRoller485Protocol, self).__init__(_io)
+        super(Roller485Protocol, self).__init__(_io)
         self._parent = _parent
         self._root = _root or self
 
@@ -81,73 +81,73 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
         self.device_id = self._io.read_u1()
         _on = self.command_val
-        if _on == UnitRoller485Protocol.CommandCode.i2c_read_raw:
+        if _on == Roller485Protocol.CommandCode.i2c_read_raw:
             pass
-            self.payload = UnitRoller485Protocol.I2cReadRawReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.I2cReadRawReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_raw_resp:
             pass
-            self.payload = UnitRoller485Protocol.I2cReadRegResp(self._io, self, self._root)
+            self.payload = Roller485Protocol.I2cReadRegResp(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register:
             pass
-            self.payload = UnitRoller485Protocol.I2cReadRegReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.I2cReadRegReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register_resp:
             pass
-            self.payload = UnitRoller485Protocol.I2cReadRegResp(self._io, self, self._root)
+            self.payload = Roller485Protocol.I2cReadRegResp(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw:
             pass
-            self.payload = UnitRoller485Protocol.I2cWriteRawReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.I2cWriteRawReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw_resp:
             pass
-            self.payload = UnitRoller485Protocol.WriteStatusResp(self._io, self, self._root)
+            self.payload = Roller485Protocol.WriteStatusResp(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register:
             pass
-            self.payload = UnitRoller485Protocol.I2cWriteRegReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.I2cWriteRegReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register_resp:
             pass
-            self.payload = UnitRoller485Protocol.WriteStatusResp(self._io, self, self._root)
+            self.payload = Roller485Protocol.WriteStatusResp(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback:
             pass
-            self.payload = UnitRoller485Protocol.ReadbackReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.ReadbackReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback_resp:
             pass
-            self.payload = UnitRoller485Protocol.MotorStatusResp(self._io, self, self._root)
+            self.payload = Roller485Protocol.MotorStatusResp(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback:
             pass
-            self.payload = UnitRoller485Protocol.ReadbackReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.ReadbackReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback_resp:
             pass
-            self.payload = UnitRoller485Protocol.OtherStatusResp(self._io, self, self._root)
+            self.payload = Roller485Protocol.OtherStatusResp(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2:
+        elif _on == Roller485Protocol.CommandCode.readback_2:
             pass
-            self.payload = UnitRoller485Protocol.ReadbackReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.ReadbackReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_2_resp:
             pass
-            self.payload = UnitRoller485Protocol.Readback2Resp(self._io, self, self._root)
+            self.payload = Roller485Protocol.Readback2Resp(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3:
+        elif _on == Roller485Protocol.CommandCode.readback_3:
             pass
-            self.payload = UnitRoller485Protocol.ReadbackReq(self._io, self, self._root)
+            self.payload = Roller485Protocol.ReadbackReq(self._io, self, self._root)
             self.payload._read()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_3_resp:
             pass
-            self.payload = UnitRoller485Protocol.Readback3Resp(self._io, self, self._root)
+            self.payload = Roller485Protocol.Readback3Resp(self._io, self, self._root)
             self.payload._read()
         else:
             pass
-            self.payload = UnitRoller485Protocol.ConfigPayload(self._io, self, self._root)
+            self.payload = Roller485Protocol.ConfigPayload(self._io, self, self._root)
             self.payload._read()
         self.crc8 = self._io.read_u1()
         self._dirty = False
@@ -162,52 +162,52 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
             pass
 
         _on = self.command_val
-        if _on == UnitRoller485Protocol.CommandCode.i2c_read_raw:
+        if _on == Roller485Protocol.CommandCode.i2c_read_raw:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_raw_resp:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register_resp:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw_resp:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register_resp:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback_resp:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback_resp:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2:
+        elif _on == Roller485Protocol.CommandCode.readback_2:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_2_resp:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3:
+        elif _on == Roller485Protocol.CommandCode.readback_3:
             pass
             self.payload._fetch_instances()
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_3_resp:
             pass
             self.payload._fetch_instances()
         else:
@@ -216,7 +216,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
     def _write__seq(self, io=None):
-        super(UnitRoller485Protocol, self)._write__seq(io)
+        super(Roller485Protocol, self)._write__seq(io)
         self._io.write_u1(self.first_byte)
         if self.first_byte == 170:
             pass
@@ -228,52 +228,52 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
         self._io.write_u1(self.device_id)
         _on = self.command_val
-        if _on == UnitRoller485Protocol.CommandCode.i2c_read_raw:
+        if _on == Roller485Protocol.CommandCode.i2c_read_raw:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_raw_resp:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register_resp:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw_resp:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register_resp:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback_resp:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback_resp:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2:
+        elif _on == Roller485Protocol.CommandCode.readback_2:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_2_resp:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3:
+        elif _on == Roller485Protocol.CommandCode.readback_3:
             pass
             self.payload._write__seq(self._io)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_3_resp:
             pass
             self.payload._write__seq(self._io)
         else:
@@ -290,97 +290,97 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
             pass
 
         _on = self.command_val
-        if _on == UnitRoller485Protocol.CommandCode.i2c_read_raw:
+        if _on == Roller485Protocol.CommandCode.i2c_read_raw:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_raw_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_read_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_read_register_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_raw_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_raw_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.i2c_write_register_resp:
+        elif _on == Roller485Protocol.CommandCode.i2c_write_register_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.motor_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.motor_status_readback_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.other_status_readback_resp:
+        elif _on == Roller485Protocol.CommandCode.other_status_readback_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2:
+        elif _on == Roller485Protocol.CommandCode.readback_2:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_2_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_2_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3:
+        elif _on == Roller485Protocol.CommandCode.readback_3:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
             if self.payload._parent != self:
                 raise kaitaistruct.ConsistencyError(u"payload", self, self.payload._parent)
-        elif _on == UnitRoller485Protocol.CommandCode.readback_3_resp:
+        elif _on == Roller485Protocol.CommandCode.readback_3_resp:
             pass
             if self.payload._root != self._root:
                 raise kaitaistruct.ConsistencyError(u"payload", self._root, self.payload._root)
@@ -397,7 +397,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class ConfigPayload(ReadWriteKaitaiStruct):
         """各種設定・制御コマンドの送受信で使われる標準的な12バイトのペイロード."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.ConfigPayload, self).__init__(_io)
+            super(Roller485Protocol.ConfigPayload, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -413,7 +413,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.ConfigPayload, self)._write__seq(io)
+            super(Roller485Protocol.ConfigPayload, self)._write__seq(io)
             self._io.write_s4le(self.data1)
             self._io.write_s4le(self.data2)
             self._io.write_s4le(self.data3)
@@ -426,7 +426,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class I2cReadRawReq(ReadWriteKaitaiStruct):
         """0x62 I2C Read Raw リクエストペイロード (2バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.I2cReadRawReq, self).__init__(_io)
+            super(Roller485Protocol.I2cReadRawReq, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -441,7 +441,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.I2cReadRawReq, self)._write__seq(io)
+            super(Roller485Protocol.I2cReadRawReq, self)._write__seq(io)
             self._io.write_u1(self.i2c_address)
             self._io.write_u1(self.data_length)
 
@@ -453,7 +453,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class I2cReadRegReq(ReadWriteKaitaiStruct):
         """0x60 I2C Register Read リクエストペイロード (5バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.I2cReadRegReq, self).__init__(_io)
+            super(Roller485Protocol.I2cReadRegReq, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -470,7 +470,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.I2cReadRegReq, self)._write__seq(io)
+            super(Roller485Protocol.I2cReadRegReq, self)._write__seq(io)
             self._io.write_u1(self.i2c_address)
             self._io.write_u1(self.register_address_length)
             self._io.write_u2le(self.register_address)
@@ -484,7 +484,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class I2cReadRegResp(ReadWriteKaitaiStruct):
         """0x70 / 0x72 I2C Read レスポンスペイロード (22バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.I2cReadRegResp, self).__init__(_io)
+            super(Roller485Protocol.I2cReadRegResp, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -502,7 +502,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.I2cReadRegResp, self)._write__seq(io)
+            super(Roller485Protocol.I2cReadRegResp, self)._write__seq(io)
             self._io.write_u1(self.read_status)
             self._io.write_u1(self.reserve1)
             self._io.write_u1(self.data_length)
@@ -521,7 +521,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class I2cWriteRawReq(ReadWriteKaitaiStruct):
         """0x63 I2C Write Raw リクエストペイロード (22バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.I2cWriteRawReq, self).__init__(_io)
+            super(Roller485Protocol.I2cWriteRawReq, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -539,7 +539,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.I2cWriteRawReq, self)._write__seq(io)
+            super(Roller485Protocol.I2cWriteRawReq, self)._write__seq(io)
             self._io.write_u1(self.i2c_address)
             self._io.write_u1(self.data_length)
             self._io.write_u1(self.stop_bit)
@@ -558,7 +558,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class I2cWriteRegReq(ReadWriteKaitaiStruct):
         """0x61 I2C Register Write リクエストペイロード (24バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.I2cWriteRegReq, self).__init__(_io)
+            super(Roller485Protocol.I2cWriteRegReq, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -577,7 +577,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.I2cWriteRegReq, self)._write__seq(io)
+            super(Roller485Protocol.I2cWriteRegReq, self)._write__seq(io)
             self._io.write_u1(self.i2c_address)
             self._io.write_u1(self.register_address_length)
             self._io.write_u2le(self.register_address)
@@ -597,7 +597,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class MotorStatusResp(ReadWriteKaitaiStruct):
         """0x50 Motor Status Readback レスポンスペイロード (15バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.MotorStatusResp, self).__init__(_io)
+            super(Roller485Protocol.MotorStatusResp, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -616,7 +616,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.MotorStatusResp, self)._write__seq(io)
+            super(Roller485Protocol.MotorStatusResp, self)._write__seq(io)
             self._io.write_s4le(self.speed)
             self._io.write_s4le(self.position)
             self._io.write_s4le(self.current)
@@ -632,7 +632,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class OtherStatusResp(ReadWriteKaitaiStruct):
         """0x51 Other Status Readback レスポンスペイロード (15バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.OtherStatusResp, self).__init__(_io)
+            super(Roller485Protocol.OtherStatusResp, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -651,7 +651,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.OtherStatusResp, self)._write__seq(io)
+            super(Roller485Protocol.OtherStatusResp, self)._write__seq(io)
             self._io.write_u4le(self.vin_x100)
             self._io.write_s4le(self.temp)
             self._io.write_s4le(self.encoder_counter)
@@ -667,7 +667,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class Readback2Resp(ReadWriteKaitaiStruct):
         """0x52 Readback 2 レスポンスペイロード (15バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.Readback2Resp, self).__init__(_io)
+            super(Roller485Protocol.Readback2Resp, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -686,7 +686,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.Readback2Resp, self)._write__seq(io)
+            super(Roller485Protocol.Readback2Resp, self)._write__seq(io)
             self._io.write_u4le(self.speed_p)
             self._io.write_u4le(self.speed_i)
             self._io.write_u4le(self.speed_d)
@@ -702,7 +702,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class Readback3Resp(ReadWriteKaitaiStruct):
         """0x53 Readback 3 レスポンスペイロード (15バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.Readback3Resp, self).__init__(_io)
+            super(Roller485Protocol.Readback3Resp, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -721,7 +721,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.Readback3Resp, self)._write__seq(io)
+            super(Roller485Protocol.Readback3Resp, self)._write__seq(io)
             self._io.write_u4le(self.position_p)
             self._io.write_u4le(self.position_i)
             self._io.write_u4le(self.position_d)
@@ -737,7 +737,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class ReadbackReq(ReadWriteKaitaiStruct):
         """ステータス読み出しのリクエストペイロード (1バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.ReadbackReq, self).__init__(_io)
+            super(Roller485Protocol.ReadbackReq, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -751,7 +751,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.ReadbackReq, self)._write__seq(io)
+            super(Roller485Protocol.ReadbackReq, self)._write__seq(io)
             self._io.write_u1(self.read_flag)
 
 
@@ -762,7 +762,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
     class WriteStatusResp(ReadWriteKaitaiStruct):
         """0x71 / 0x73 I2C Write レスポンスペイロード (1バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
-            super(UnitRoller485Protocol.WriteStatusResp, self).__init__(_io)
+            super(Roller485Protocol.WriteStatusResp, self).__init__(_io)
             self._parent = _parent
             self._root = _root
 
@@ -776,7 +776,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _write__seq(self, io=None):
-            super(UnitRoller485Protocol.WriteStatusResp, self)._write__seq(io)
+            super(Roller485Protocol.WriteStatusResp, self)._write__seq(io)
             self._io.write_u1(self.write_status)
 
 
@@ -790,7 +790,7 @@ class UnitRoller485Protocol(ReadWriteKaitaiStruct):
         if hasattr(self, '_m_command_val'):
             return self._m_command_val
 
-        self._m_command_val = KaitaiStream.resolve_enum(UnitRoller485Protocol.CommandCode, (self.actual_command if self.is_response else self.first_byte))
+        self._m_command_val = KaitaiStream.resolve_enum(Roller485Protocol.CommandCode, (self.actual_command if self.is_response else self.first_byte))
         return getattr(self, '_m_command_val', None)
 
     def _invalidate_command_val(self):
