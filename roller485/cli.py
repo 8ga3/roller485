@@ -1,6 +1,6 @@
-"""roller485 CLI - Unit-Roller485 制御ツール
+"""roller485 CLI - Unit-Roller485 control tool
 
-使用例:
+Examples:
     python -m roller485 --port /dev/ttyUSB0 motor-switch on
     python -m roller485 --port /dev/ttyUSB0 get-motor-status
 """
@@ -16,183 +16,193 @@ from roller485.util import Roller485Util
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="roller485",
-        description="Unit-Roller485 CLI 制御ツール",
+        description="Unit-Roller485 CLI control tool",
     )
     parser.add_argument(
         "--port",
         required=True,
-        help="シリアルポート (例: /dev/ttyUSB0, /dev/tty.usbserial-10)",
+        help="Serial port (e.g. /dev/ttyUSB0, /dev/tty.usbserial-10)",
     )
     parser.add_argument(
         "--target",
         type=int,
         default=0,
-        help="対象デバイスID (デフォルト: 0)",
+        help="Target device ID (default: 0)",
     )
     parser.add_argument(
         "--baudrate",
         type=int,
         default=115200,
-        help="ボーレート (デフォルト: 115200)",
+        help="Baud rate (default: 115200)",
     )
     parser.add_argument(
         "--timeout",
         type=float,
         default=1.0,
-        help="タイムアウト秒 (デフォルト: 1.0)",
+        help="Timeout in seconds (default: 1.0)",
     )
 
-    sub = parser.add_subparsers(dest="command", help="実行するコマンド")
+    sub = parser.add_subparsers(dest="command", help="Command to execute")
     sub.required = True
 
     # --- motor-switch ---
-    p = sub.add_parser("motor-switch", help="モーターON/OFF")
-    p.add_argument("state", choices=["on", "off"], help="on または off")
+    p = sub.add_parser("motor-switch", help="Turn motor ON/OFF")
+    p.add_argument("state", choices=["on", "off"], help="on or off")
 
     # --- mode-setting ---
-    p = sub.add_parser("mode-setting", help="モード設定 (フラッシュ保存)")
+    p = sub.add_parser("mode-setting", help="Set motor mode (saved to flash)")
     p.add_argument(
         "mode",
         choices=["speed", "position", "current", "encoder"],
-        help="モード: speed(1), position(2), current(3), encoder(4)",
+        help="Mode: speed(1), position(2), current(3), encoder(4)",
     )
 
     # --- remove-protection ---
-    p = sub.add_parser("remove-protection", help="保護解除")
-    p.add_argument("status", type=int, help="保護解除ステータス (0-255)")
+    p = sub.add_parser("remove-protection", help="Remove protection")
+    p.add_argument("status", type=int, help="Protection removal status (0-255)")
 
     # --- save-to-flash ---
-    sub.add_parser("save-to-flash", help="フラッシュメモリに保存")
+    sub.add_parser("save-to-flash", help="Save settings to flash memory")
 
     # --- set-encoder ---
-    p = sub.add_parser("set-encoder", help="エンコーダの設定")
-    p.add_argument("value", type=int, help="エンコーダの値")
+    p = sub.add_parser("set-encoder", help="Set encoder value")
+    p.add_argument("value", type=int, help="Encoder value")
 
     # --- button-switching-mode ---
-    p = sub.add_parser("button-switching-mode", help="ボタンの切り替えモード設定")
-    p.add_argument("mode", choices=["on", "off"], help="on または off")
+    p = sub.add_parser("button-switching-mode", help="Set button switching mode")
+    p.add_argument("mode", choices=["on", "off"], help="on or off")
 
     # --- rgb-led-control ---
-    p = sub.add_parser("rgb-led-control", help="LED制御 (フラッシュ保存)")
-    p.add_argument("--r", type=int, default=0, help="赤 (0-255, デフォルト: 0)")
-    p.add_argument("--g", type=int, default=0, help="緑 (0-255, デフォルト: 0)")
-    p.add_argument("--b", type=int, default=0, help="青 (0-255, デフォルト: 0)")
+    p = sub.add_parser("rgb-led-control", help="Control RGB LED (saved to flash)")
+    p.add_argument("--r", type=int, default=0, help="Red (0-255, default: 0)")
+    p.add_argument("--g", type=int, default=0, help="Green (0-255, default: 0)")
+    p.add_argument("--b", type=int, default=0, help="Blue (0-255, default: 0)")
     p.add_argument(
         "--mode",
         type=int,
         default=0,
         choices=[0, 1],
-        help="0: システム表示, 1: ユーザー制御 (デフォルト: 0)",
+        help="0: System display, 1: User control (default: 0)",
     )
     p.add_argument(
-        "--brightness", type=int, default=100, help="明るさ (0-100, デフォルト: 100)"
+        "--brightness", type=int, default=100, help="Brightness (0-100, default: 100)"
     )
 
     # --- set-rs485-baud-rate ---
     p = sub.add_parser(
-        "set-rs485-baud-rate", help="RS485ボーレート設定 (フラッシュ保存)"
+        "set-rs485-baud-rate", help="Set RS485 baud rate (saved to flash)"
     )
     p.add_argument(
         "baud_rate",
         choices=["115200", "19200", "9600"],
-        help="ボーレート: 115200, 19200, 9600",
+        help="Baud rate: 115200, 19200, 9600",
     )
 
     # --- set-device-id ---
-    p = sub.add_parser("set-device-id", help="デバイスID設定 (フラッシュ保存)")
-    p.add_argument("device_id", type=int, help="デバイスID (0-255)")
+    p = sub.add_parser("set-device-id", help="Set device ID (saved to flash)")
+    p.add_argument("device_id", type=int, help="Device ID (0-255)")
 
     # --- set-motor-jam-protection ---
-    p = sub.add_parser("set-motor-jam-protection", help="モータジャム保護の設定")
-    p.add_argument("enable", choices=["on", "off"], help="on: 有効, off: 無効")
+    p = sub.add_parser("set-motor-jam-protection", help="Set motor jam protection")
+    p.add_argument("enable", choices=["on", "off"], help="on: enable, off: disable")
 
     # --- set-motor-position-over-range-protection ---
     p = sub.add_parser(
         "set-motor-position-over-range-protection",
-        help="モータ位置オーバーレンジ保護の設定 (フラッシュ保存)",
+        help="Set motor position over-range protection (saved to flash)",
     )
-    p.add_argument("enable", choices=["on", "off"], help="on: 有効, off: 無効")
+    p.add_argument("enable", choices=["on", "off"], help="on: enable, off: disable")
 
     # --- set-speed-and-max-current ---
-    p = sub.add_parser("set-speed-and-max-current", help="モータ速度と最大電流の設定")
-    p.add_argument("speed", type=int, help="速度 (-21000000〜21000000) [RPM]")
-    p.add_argument("max_current", type=float, help="最大電流 (-1200〜1200) [mA]")
+    p = sub.add_parser(
+        "set-speed-and-max-current", help="Set motor speed and max current"
+    )
+    p.add_argument("speed", type=int, help="Speed (-21000000 to 21000000) [RPM]")
+    p.add_argument("max_current", type=float, help="Max current (-1200 to 1200) [mA]")
 
     # --- set-speed-pid ---
-    p = sub.add_parser("set-speed-pid", help="モータ速度PID設定 (フラッシュ保存)")
-    p.add_argument("p", type=float, help="P値")
-    p.add_argument("i", type=float, help="I値")
-    p.add_argument("d", type=float, help="D値")
+    p = sub.add_parser(
+        "set-speed-pid", help="Set speed PID parameters (saved to flash)"
+    )
+    p.add_argument("p", type=float, help="P value")
+    p.add_argument("i", type=float, help="I value")
+    p.add_argument("d", type=float, help="D value")
 
     # --- set-position-and-max-current ---
     p = sub.add_parser(
-        "set-position-and-max-current", help="モータ位置と最大電流の設定"
+        "set-position-and-max-current", help="Set motor position and max current"
     )
-    p.add_argument("position", type=int, help="位置 (-21000000〜21000000) [counts]")
-    p.add_argument("max_current", type=float, help="最大電流 (-1200〜1200) [mA]")
+    p.add_argument(
+        "position", type=int, help="Position (-21000000 to 21000000) [counts]"
+    )
+    p.add_argument("max_current", type=float, help="Max current (-1200 to 1200) [mA]")
 
     # --- set-position-pid ---
-    p = sub.add_parser("set-position-pid", help="モータ位置PID設定 (フラッシュ保存)")
-    p.add_argument("p", type=float, help="P値")
-    p.add_argument("i", type=float, help="I値")
-    p.add_argument("d", type=float, help="D値")
+    p = sub.add_parser(
+        "set-position-pid", help="Set position PID parameters (saved to flash)"
+    )
+    p.add_argument("p", type=float, help="P value")
+    p.add_argument("i", type=float, help="I value")
+    p.add_argument("d", type=float, help="D value")
 
     # --- set-current ---
-    p = sub.add_parser("set-current", help="モータ電流の設定")
-    p.add_argument("current", type=float, help="電流 (-1200〜1200) [mA]")
+    p = sub.add_parser("set-current", help="Set motor current")
+    p.add_argument("current", type=float, help="Current (-1200 to 1200) [mA]")
 
     # --- get-motor-status ---
-    sub.add_parser("get-motor-status", help="モータの状態を読み取り")
+    sub.add_parser("get-motor-status", help="Read motor status")
 
     # --- get-other-status ---
-    sub.add_parser("get-other-status", help="その他の状態を読み取り")
+    sub.add_parser("get-other-status", help="Read other status")
 
     # --- get-speed-pid-and-rgb ---
-    sub.add_parser("get-speed-pid-and-rgb", help="速度PIDとRGBの状態を読み取り")
+    sub.add_parser("get-speed-pid-and-rgb", help="Read speed PID and RGB status")
 
     # --- get-position-pid-and-other ---
-    sub.add_parser("get-position-pid-and-other", help="位置PIDとIDの状態を読み取り")
+    sub.add_parser(
+        "get-position-pid-and-other", help="Read position PID and other status"
+    )
 
     # --- read-i2c ---
-    p = sub.add_parser("read-i2c", help="I2Cレジスタ読み取り")
-    p.add_argument("addr", type=lambda x: int(x, 0), help="I2Cアドレス (例: 0x50)")
+    p = sub.add_parser("read-i2c", help="Read I2C register")
+    p.add_argument("addr", type=lambda x: int(x, 0), help="I2C address (e.g. 0x50)")
     p.add_argument(
-        "reg_len", type=int, choices=[0, 1], help="レジスタ長 (0: 1byte, 1: 2byte)"
+        "reg_len", type=int, choices=[0, 1], help="Register length (0: 1byte, 1: 2byte)"
     )
     p.add_argument(
-        "reg_addr", type=lambda x: int(x, 0), help="レジスタアドレス (例: 0x00)"
+        "reg_addr", type=lambda x: int(x, 0), help="Register address (e.g. 0x00)"
     )
-    p.add_argument("data_len", type=int, help="読み取りデータ長 (0-16)")
+    p.add_argument("data_len", type=int, help="Data length to read (0-16)")
 
     # --- write-i2c ---
-    p = sub.add_parser("write-i2c", help="I2Cレジスタ書き込み")
-    p.add_argument("addr", type=lambda x: int(x, 0), help="I2Cアドレス (例: 0x50)")
+    p = sub.add_parser("write-i2c", help="Write I2C register")
+    p.add_argument("addr", type=lambda x: int(x, 0), help="I2C address (e.g. 0x50)")
     p.add_argument(
-        "reg_len", type=int, choices=[0, 1], help="レジスタ長 (0: 1byte, 1: 2byte)"
+        "reg_len", type=int, choices=[0, 1], help="Register length (0: 1byte, 1: 2byte)"
     )
     p.add_argument(
-        "reg_addr", type=lambda x: int(x, 0), help="レジスタアドレス (例: 0x00)"
+        "reg_addr", type=lambda x: int(x, 0), help="Register address (e.g. 0x00)"
     )
-    p.add_argument("data", help="書き込みデータ (hex文字列, 例: 0102ff)")
+    p.add_argument("data", help="Data to write (hex string, e.g. 0102ff)")
 
     # --- read-i2c-raw ---
-    p = sub.add_parser("read-i2c-raw", help="I2Cローデータ読み取り")
-    p.add_argument("addr", type=lambda x: int(x, 0), help="I2Cアドレス (例: 0x50)")
-    p.add_argument("data_len", type=int, help="読み取りデータ長 (0-16)")
+    p = sub.add_parser("read-i2c-raw", help="Read raw I2C data")
+    p.add_argument("addr", type=lambda x: int(x, 0), help="I2C address (e.g. 0x50)")
+    p.add_argument("data_len", type=int, help="Data length to read (0-16)")
 
     # --- write-i2c-raw ---
-    p = sub.add_parser("write-i2c-raw", help="I2Cローデータ書き込み")
-    p.add_argument("addr", type=lambda x: int(x, 0), help="I2Cアドレス (例: 0x50)")
+    p = sub.add_parser("write-i2c-raw", help="Write raw I2C data")
+    p.add_argument("addr", type=lambda x: int(x, 0), help="I2C address (e.g. 0x50)")
     p.add_argument(
-        "stop_bit", type=int, choices=[0, 1], help="ストップビット (0: なし, 1: あり)"
+        "stop_bit", type=int, choices=[0, 1], help="Stop bit (0: none, 1: present)"
     )
-    p.add_argument("data", help="書き込みデータ (hex文字列, 例: 0102ff)")
+    p.add_argument("data", help="Data to write (hex string, e.g. 0102ff)")
 
     return parser
 
 
 def run(args: argparse.Namespace) -> int:
-    """コマンドを実行して終了コードを返す"""
+    """Execute a command and return the exit code."""
     r485 = Roller485Util(
         target=args.target,
         port=args.port,
@@ -206,7 +216,7 @@ def run(args: argparse.Namespace) -> int:
 
         cmd = args.command
 
-        # --- 設定系コマンド (bool を返す) ---
+        # --- Setting commands (return bool) ---
         if cmd == "motor-switch":
             state = (
                 Roller485Util.Switch.On
@@ -282,7 +292,7 @@ def run(args: argparse.Namespace) -> int:
         elif cmd == "set-current":
             ok = r485.set_current(args.current)
 
-        # --- 読み取り系コマンド (dict を返す) ---
+        # --- Read commands (return dict) ---
         elif cmd == "get-motor-status":
             result = r485.get_motor_status()
             print(json.dumps(result, indent=2, ensure_ascii=False))
@@ -303,14 +313,14 @@ def run(args: argparse.Namespace) -> int:
             print(json.dumps(result, indent=2, ensure_ascii=False))
             return 0 if result else 1
 
-        # --- I2C系コマンド ---
+        # --- I2C commands ---
         elif cmd == "read-i2c":
             data = r485.read_i2c(args.addr, args.reg_len, args.reg_addr, args.data_len)
             if data:
                 print(data.hex())
                 return 0
             else:
-                print("読み取り失敗", file=sys.stderr)
+                print("Read failed", file=sys.stderr)
                 return 1
 
         elif cmd == "write-i2c":
@@ -323,7 +333,7 @@ def run(args: argparse.Namespace) -> int:
                 print(data.hex())
                 return 0
             else:
-                print("読み取り失敗", file=sys.stderr)
+                print("Read failed", file=sys.stderr)
                 return 1
 
         elif cmd == "write-i2c-raw":
@@ -331,10 +341,10 @@ def run(args: argparse.Namespace) -> int:
             ok = r485.write_i2c_raw(args.addr, args.stop_bit, data)
 
         else:
-            print(f"不明なコマンド: {cmd}", file=sys.stderr)
+            print(f"Unknown command: {cmd}", file=sys.stderr)
             return 1
 
-        # 設定系・書き込み系の結果表示
+        # Display result for setting/write commands
         if ok:
             print("OK")
             return 0
@@ -343,7 +353,7 @@ def run(args: argparse.Namespace) -> int:
             return 1
 
     except Exception as e:
-        print(f"エラー: {e}", file=sys.stderr)
+        print(f"Error: {e}", file=sys.stderr)
         return 1
 
     finally:
