@@ -9,5 +9,11 @@ dependencies = [
     "pyserial>=3.5",
 ]
 
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "ruff>=0.15.2",
+]
+
 [project.scripts]
 roller485 = "roller485.cli:main"
