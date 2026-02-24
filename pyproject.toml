@@ -12,8 +12,12 @@ dependencies = [
 [dependency-groups]
 dev = [
     "mypy>=1.19.1",
+    "pytest>=8.0",
     "ruff>=0.15.2",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [project.scripts]
 roller485 = "roller485.cli:main"

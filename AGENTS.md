@@ -9,7 +9,14 @@ M5Stack Unit-Roller485 を Python から制御するためのモジュールで�
 ## ディレクトリ構成
 
 - `roller485/` - メインの Python モジュール
-- `tests/` - テストスクリプト
+- `tests/` - ユニットテスト・テストスクリプト
+  - `conftest.py` - 共通フィクスチャ（モック化されたシリアル通信など）
+  - `test_crc.py` - CRC8 計算・パケット長・replace_crc8 のテスト
+  - `test_protocol.py` - プロトコルパース / シリアライズのテスト
+  - `test_util.py` - Roller485Util メソッドのテスト（シリアル通信モック）
+  - `test_cli.py` - CLI パーサー・run() 関数のテスト
+- `examples/` - サンプルスクリプト
+  - `hello-motor.py` - ハードウェア接続デモスクリプト
 - `docs/` - ドキュメント
 
 ## コーディング規約
