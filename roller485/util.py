@@ -537,7 +537,7 @@ class Roller485Util(rs.RS485):
         self._delay()
 
         msg = self.read(
-            self.get_packet_length(Proto.CommandCode.motor_status_readback.value)
+            self.get_packet_length(Proto.CommandCode.motor_status_readback_resp.value)
         )
         resp = Proto(KaitaiStream(io.BytesIO(msg)))
         resp._read()
@@ -563,7 +563,7 @@ class Roller485Util(rs.RS485):
         self._delay()
 
         msg = self.read(
-            self.get_packet_length(Proto.CommandCode.other_status_readback.value)
+            self.get_packet_length(Proto.CommandCode.other_status_readback_resp.value)
         )
         resp = Proto(KaitaiStream(io.BytesIO(msg)))
         resp._read()
