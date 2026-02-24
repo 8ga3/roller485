@@ -10,4 +10,4 @@ dependencies = [
 ]
 
 [project.scripts]
-roller485 = "roller485.__main__:main"
+roller485 = "roller485.cli:main"
