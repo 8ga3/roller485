@@ -8,3 +8,6 @@ dependencies = [
     "kaitaistruct>=0.11",
     "pyserial>=3.5",
 ]
+
+[project.scripts]
+roller485 = "roller485.__main__:main"
