@@ -119,7 +119,17 @@ print(status)
 r485.motor_switch(Roller485Util.Switch.On)
 
 # 速度と最大電流の設定 (100 RPM, 500 mA)
+# RPMは+が時計回り(CW) -が反時計回り(CCW)
 r485.set_speed_and_max_current(100, 500)
+time.sleep(5)
+
+# 反時計回り(CCW)
+r485.set_speed_and_max_current(-100, 500)
+time.sleep(5)
+
+# 速度0にすることで、次回モーター始動したときに
+# 急に動き出さないようになる
+r485.set_speed_and_max_current(0, 500)
 time.sleep(5)
 
 # モーターOFF
