@@ -43,6 +43,11 @@ def main():
             raise Exception("Failed to set speed and max current")
         time.sleep(5)
 
+        # 速度0にすることで、次回モーター始動したときに
+        # 急に動き出さないようになる
+        if not r485.set_speed_and_max_current(0, 500):
+            raise Exception("Failed to set speed and max current")
+
         # モーター停止
         print("Motor OFF")
         if not r485.motor_switch(Roller485Util.Switch.Off):
