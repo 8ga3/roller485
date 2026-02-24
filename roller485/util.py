@@ -213,10 +213,10 @@ class Roller485Util(rs.RS485):
             bool: コマンドが成功したかどうか
         """
         status = max(0, min(255, status))
-        self._setting(Proto.CommandCode.remove_protection, data2=status)
+        self._setting(Proto.CommandCode.remove_protection, data1=0, data2=status)
         self._delay()
         return self._setting_resp(
-            Proto.CommandCode.remove_protection_resp, data2=status
+            Proto.CommandCode.remove_protection_resp, data1=0, data2=status
         )
 
     def save_to_flash(self) -> bool:

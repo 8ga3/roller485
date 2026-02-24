@@ -522,19 +522,28 @@ class TestGetPositionPidAndOther:
 
 
 class TestRemoveProtection:
-    """remove_protection() のテスト.
-
-    NOTE: remove_protection() は _setting() を data2= で呼び出すが、
-    data1 は必須の位置引数のため TypeError が発生する。
-    これはソースコードのバグである。
-    """
+    """remove_protection() のテスト."""
 
     @patch("roller485.util.time.sleep")
-    def test_remove_protection_raises_type_error(
-        self, _mock_sleep, mock_roller: Roller485Util
-    ) -> None:
-        with pytest.raises(TypeError):
-            mock_roller.remove_protection(100)
+    def test_remove_protection(self, _mock_sleep, mock_roller: Roller485Util) -> None:
+        resp = build_setting_response(
+            Proto.CommandCode.remove_protection_resp, data2=100
+        )
+        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+
+        result = mock_roller.remove_protection(100)
+        assert result is True
+
+    @patch("roller485.util.time.sleep")
+    def test_clipping(self, _mock_sleep, mock_roller: Roller485Util) -> None:
+        """status は 0-255 にクリッピングされる."""
+        resp = build_setting_response(
+            Proto.CommandCode.remove_protection_resp, data2=255
+        )
+        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+
+        result = mock_roller.remove_protection(999)
+        assert result is True
 
 
 class TestSetEncoder:
