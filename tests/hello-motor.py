@@ -22,6 +22,11 @@ def main():
 
         print(f"Connection established: {PORT}")
 
+        # モーターステータス
+        print("Motor status:")
+        status = r485.get_motor_status()
+        print(status)
+
         # モーター始動
         print("Motor ON")
         if not r485.motor_switch(Roller485Util.Switch.On):
