@@ -1,7 +1,7 @@
 import time
 import traceback
 
-from util import Roller485Util
+from roller485 import Roller485Util
 
 
 def main():
