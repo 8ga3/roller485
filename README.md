@@ -149,4 +149,4 @@ kaitai-struct-compiler -t python -w roller485.ksy
 
 ## ライセンス
 
-TBD
+MIT License
