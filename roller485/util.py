@@ -203,20 +203,20 @@ class Roller485Util(rs.RS485):
         self._delay()
         return self._setting_resp(Proto.CommandCode.mode_setting_resp, data1=mode.value)
 
-    def remove_protection(self, status: int) -> bool:
+    def remove_protection(self, state: Switch) -> bool:
         """保護解除
 
         Args:
-            status (int): 保護解除のステータス
+            state (Switch): 保護解除 1で実行
 
         Returns:
             bool: コマンドが成功したかどうか
         """
-        status = max(0, min(255, status))
-        self._setting(Proto.CommandCode.remove_protection, data1=0, data2=status)
+        self._setting(Proto.CommandCode.remove_protection, data1=0, data2=state.value)
         self._delay()
+        # 保護解除のレスポンスは常にdata2=0(解除成功)
         return self._setting_resp(
-            Proto.CommandCode.remove_protection_resp, data1=0, data2=status
+            Proto.CommandCode.remove_protection_resp, data1=0, data2=0
         )
 
     def save_to_flash(self) -> bool:

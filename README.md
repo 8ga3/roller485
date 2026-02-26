@@ -57,7 +57,6 @@ roller485 --port /dev/ttyUSB0 motor-switch off
 |---|---|
 | `motor-switch <on\|off>` | モーターの ON/OFF |
 | `mode-setting <speed\|position\|current\|encoder>` | モーターモード設定 (フラッシュ保存) |
-| `remove-protection <status>` | 保護解除 |
 | `save-to-flash` | フラッシュメモリに保存 |
 | `set-encoder <value>` | エンコーダの設定 |
 | `button-switching-mode <on\|off>` | ボタン切替モード設定 |
@@ -65,6 +64,7 @@ roller485 --port /dev/ttyUSB0 motor-switch off
 | `set-rs485-baud-rate <115200\|19200\|9600>` | RS485 ボーレート設定 (フラッシュ保存) |
 | `set-device-id <id>` | デバイスID 設定 (フラッシュ保存) |
 | `set-motor-jam-protection <on\|off>` | モータジャム保護設定 |
+| `remove-protection` | 保護解除 |
 | `set-motor-position-over-range-protection <on\|off>` | 位置オーバーレンジ保護設定 (フラッシュ保存) |
 
 **制御コマンド:**

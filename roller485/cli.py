@@ -59,7 +59,6 @@ def create_parser() -> argparse.ArgumentParser:
 
     # --- remove-protection ---
     p = sub.add_parser("remove-protection", help="Remove protection")
-    p.add_argument("status", type=int, help="Protection removal status (0-255)")
 
     # --- save-to-flash ---
     sub.add_parser("save-to-flash", help="Save settings to flash memory")
@@ -235,7 +234,7 @@ def run(args: argparse.Namespace) -> int:
             ok = r485.mode_setting(mode_map[args.mode])
 
         elif cmd == "remove-protection":
-            ok = r485.remove_protection(args.status)
+            ok = r485.remove_protection(Roller485Util.Switch.On)
 
         elif cmd == "save-to-flash":
             ok = r485.save_to_flash()
