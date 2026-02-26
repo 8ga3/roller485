@@ -203,7 +203,7 @@ class Roller485Util(rs.RS485):
         self._delay()
         return self._setting_resp(Proto.CommandCode.mode_setting_resp, data1=mode.value)
 
-    def remove_protection(self, state: Switch) -> bool:
+    def remove_protection(self, state: Switch = Switch.On) -> bool:
         """保護解除
 
         Args:
