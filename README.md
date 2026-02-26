@@ -59,7 +59,7 @@ roller485 --port /dev/ttyUSB0 motor-switch off
 | `mode-setting <speed\|position\|current\|encoder>` | モーターモード設定 (フラッシュ保存) |
 | `save-to-flash` | フラッシュメモリに保存 |
 | `set-encoder <value>` | エンコーダの設定 |
-| `button-switching-mode <on\|off>` | ボタン切替モード設定 |
+| `button-switching-mode <on\|off>` | ボタン切替モード設定（onで5秒間長押しでランニングモードに切り替え） |
 | `rgb-led-control [--r R] [--g G] [--b B] [--mode MODE] [--brightness BRI]` | RGB LED 制御 (フラッシュ保存) |
 | `set-rs485-baud-rate <115200\|19200\|9600>` | RS485 ボーレート設定 (フラッシュ保存) |
 | `set-device-id <id>` | デバイスID 設定 (フラッシュ保存) |
