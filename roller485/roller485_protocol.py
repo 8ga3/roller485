@@ -567,7 +567,7 @@ class Roller485Protocol(ReadWriteKaitaiStruct):
             self.register_address_length = self._io.read_u1()
             self.register_address = self._io.read_u2le()
             self.data_length = self._io.read_u1()
-            self.reserve = self._io.read_bytes(3)
+            self.reserve = self._io.read_bytes(1)
             self.data = self._io.read_bytes(16)
             self._dirty = False
 
@@ -587,8 +587,8 @@ class Roller485Protocol(ReadWriteKaitaiStruct):
 
 
         def _check(self):
-            if len(self.reserve) != 3:
-                raise kaitaistruct.ConsistencyError(u"reserve", 3, len(self.reserve))
+            if len(self.reserve) != 1:
+                raise kaitaistruct.ConsistencyError(u"reserve", 1, len(self.reserve))
             if len(self.data) != 16:
                 raise kaitaistruct.ConsistencyError(u"data", 16, len(self.data))
             self._dirty = False

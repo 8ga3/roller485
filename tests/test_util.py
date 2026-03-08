@@ -53,8 +53,8 @@ class TestSettingPacketBuild:
         """motor_switch ON のパケット構造を検証."""
         mock_roller._setting(Proto.CommandCode.motor_switch, data1=1)
 
-        mock_roller.write.assert_called_once()  # type: ignore[union-attr]
-        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[union-attr]
+        mock_roller.write.assert_called_once()  # type: ignore[attr-defined]
+        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[attr-defined]
 
         assert len(written) == 15
         # first_byte = motor_switch (0x00)
@@ -76,7 +76,7 @@ class TestSettingPacketBuild:
             Proto.CommandCode.speed_control, data1=speed, data2=max_current
         )
 
-        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[union-attr]
+        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[attr-defined]
         d1 = struct.unpack_from("<i", written, 2)[0]
         d2 = struct.unpack_from("<i", written, 6)[0]
         assert d1 == speed
@@ -94,7 +94,7 @@ class TestSettingResp:
     def test_valid_response_returns_true(self, mock_roller: Roller485Util) -> None:
         """正しいレスポンスで True を返す."""
         resp = build_setting_response(Proto.CommandCode.motor_switch_resp, data1=1)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller._setting_resp(Proto.CommandCode.motor_switch_resp, data1=1)
         assert result is True
@@ -102,7 +102,7 @@ class TestSettingResp:
     def test_wrong_data_returns_false(self, mock_roller: Roller485Util) -> None:
         """期待と異なる data1 で False を返す."""
         resp = build_setting_response(Proto.CommandCode.motor_switch_resp, data1=0)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller._setting_resp(Proto.CommandCode.motor_switch_resp, data1=1)
         assert result is False
@@ -114,7 +114,7 @@ class TestSettingResp:
         )
         # CRC を壊す
         resp[-1] ^= 0xFF
-        mock_roller.read.return_value = bytes(resp)  # type: ignore[union-attr]
+        mock_roller.read.return_value = bytes(resp)  # type: ignore[attr-defined]
 
         result = mock_roller._setting_resp(Proto.CommandCode.motor_switch_resp, data1=1)
         assert result is False
@@ -131,16 +131,16 @@ class TestMotorSwitch:
     @patch("roller485.util.time.sleep")
     def test_motor_switch_on(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.motor_switch_resp, data1=1)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.motor_switch(Roller485Util.Switch.On)
         assert result is True
-        mock_roller.write.assert_called_once()  # type: ignore[union-attr]
+        mock_roller.write.assert_called_once()  # type: ignore[attr-defined]
 
     @patch("roller485.util.time.sleep")
     def test_motor_switch_off(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.motor_switch_resp, data1=0)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.motor_switch(Roller485Util.Switch.Off)
         assert result is True
@@ -152,7 +152,7 @@ class TestModeSetting:
     @patch("roller485.util.time.sleep")
     def test_set_speed_mode(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.mode_setting_resp, data1=1)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.mode_setting(Roller485Util.MotorMode.Speed)
         assert result is True
@@ -160,7 +160,7 @@ class TestModeSetting:
     @patch("roller485.util.time.sleep")
     def test_set_position_mode(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.mode_setting_resp, data1=2)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.mode_setting(Roller485Util.MotorMode.Position)
         assert result is True
@@ -172,7 +172,7 @@ class TestSaveToFlash:
     @patch("roller485.util.time.sleep")
     def test_save_success(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.save_to_flash_resp, data1=1)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.save_to_flash()
         assert result is True
@@ -199,13 +199,13 @@ class TestSpeedAndMaxCurrent:
             data1=expected_speed,
             data2=expected_current,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_speed_and_max_current(speed, max_current)
         assert result is True
 
         # 送信パケットの data1 を検証
-        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[union-attr]
+        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[attr-defined]
         d1 = struct.unpack_from("<i", written, 2)[0]
         assert d1 == expected_speed
 
@@ -222,11 +222,11 @@ class TestSpeedAndMaxCurrent:
             data1=expected_speed,
             data2=0,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         mock_roller.set_speed_and_max_current(speed, 0)
 
-        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[union-attr]
+        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[attr-defined]
         d1 = struct.unpack_from("<i", written, 2)[0]
         assert d1 == expected_speed
 
@@ -243,11 +243,11 @@ class TestSpeedAndMaxCurrent:
             data1=expected_speed,
             data2=0,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         mock_roller.set_speed_and_max_current(speed, 0)
 
-        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[union-attr]
+        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[attr-defined]
         d1 = struct.unpack_from("<i", written, 2)[0]
         assert d1 == expected_speed
 
@@ -269,12 +269,12 @@ class TestSpeedPid:
             data2=int_i,
             data3=int_d,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_speed_pid(p, i, d)
         assert result is True
 
-        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[union-attr]
+        written: bytes = mock_roller.write.call_args[0][0]  # type: ignore[attr-defined]
         d1 = struct.unpack_from("<i", written, 2)[0]
         d2 = struct.unpack_from("<i", written, 6)[0]
         d3 = struct.unpack_from("<i", written, 10)[0]
@@ -298,7 +298,7 @@ class TestRgbLedControl:
             data1=expected_data1,
             data2=expected_data2,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.rgb_led_control(
             r=r, g=g, b=b, mode=mode, brightness=brightness
@@ -325,7 +325,7 @@ class TestRgbLedControl:
             data1=expected_data1,
             data2=clipped_brightness,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.rgb_led_control(
             r=r, g=g, b=b, mode=0, brightness=brightness
@@ -345,7 +345,7 @@ class TestSetCurrent:
         resp = build_setting_response(
             Proto.CommandCode.current_control_resp, data1=expected
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_current(current)
         assert result is True
@@ -359,7 +359,7 @@ class TestSetCurrent:
         resp = build_setting_response(
             Proto.CommandCode.current_control_resp, data1=expected
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_current(current)
         assert result is True
@@ -388,7 +388,7 @@ class TestGetMotorStatus:
             Proto.CommandCode.motor_status_readback_resp,
             payload_bytes=payload,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.get_motor_status()
         assert result["speed"] == pytest.approx(100.0)
@@ -411,7 +411,7 @@ class TestGetMotorStatus:
             )
         )
         resp[-1] ^= 0xFF  # CRC を壊す
-        mock_roller.read.return_value = bytes(resp)  # type: ignore[union-attr]
+        mock_roller.read.return_value = bytes(resp)  # type: ignore[attr-defined]
 
         result = mock_roller.get_motor_status()
         assert result == {}
@@ -442,7 +442,7 @@ class TestGetOtherStatus:
             Proto.CommandCode.other_status_readback_resp,
             payload_bytes=payload,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.get_other_status()
         assert result["vin"] == pytest.approx(12.0)
@@ -469,7 +469,7 @@ class TestGetSpeedPidAndRgb:
             Proto.CommandCode.readback_2_resp,
             payload_bytes=payload,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.get_speed_pid_and_rgb()
         assert result["speed_p"] == pytest.approx(1.5)
@@ -505,7 +505,7 @@ class TestGetPositionPidAndOther:
             Proto.CommandCode.readback_3_resp,
             payload_bytes=payload,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.get_position_pid_and_other()
         assert result["position_p"] == pytest.approx(2.0)
@@ -529,7 +529,7 @@ class TestRemoveProtection:
         resp = build_setting_response(
             Proto.CommandCode.remove_protection_resp, data2=100
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.remove_protection(100)
         assert result is True
@@ -540,7 +540,7 @@ class TestRemoveProtection:
         resp = build_setting_response(
             Proto.CommandCode.remove_protection_resp, data2=255
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.remove_protection(999)
         assert result is True
@@ -552,7 +552,7 @@ class TestSetEncoder:
     @patch("roller485.util.time.sleep")
     def test_set_encoder(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.encoder_resp, data1=12345)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_encoder(12345)
         assert result is True
@@ -566,7 +566,7 @@ class TestButtonSwitchingMode:
         resp = build_setting_response(
             Proto.CommandCode.button_switch_mode_resp, data1=1
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.button_switching_mode(Roller485Util.ButtonMode.On)
         assert result is True
@@ -578,7 +578,7 @@ class TestSetDeviceId:
     @patch("roller485.util.time.sleep")
     def test_set_device_id(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.device_id_resp, data1=5)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_device_id(5)
         assert result is True
@@ -586,7 +586,7 @@ class TestSetDeviceId:
     @patch("roller485.util.time.sleep")
     def test_device_id_clipping(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.device_id_resp, data1=255)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_device_id(999)
         assert result is True
@@ -600,7 +600,7 @@ class TestMotorJamProtection:
         resp = build_setting_response(
             Proto.CommandCode.motor_jam_protection_resp, data1=1
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_motor_jam_protection(True)
         assert result is True
@@ -610,7 +610,7 @@ class TestMotorJamProtection:
         resp = build_setting_response(
             Proto.CommandCode.motor_jam_protection_resp, data1=0
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_motor_jam_protection(False)
         assert result is True
@@ -625,7 +625,7 @@ class TestPositionOverRangeProtection:
             Proto.CommandCode.motor_position_over_range_protection_resp,
             data1=1,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_motor_position_over_range_protection(True)
         assert result is True
@@ -637,7 +637,7 @@ class TestSetRs485BaudRate:
     @patch("roller485.util.time.sleep")
     def test_set_baud_115200(self, _mock_sleep, mock_roller: Roller485Util) -> None:
         resp = build_setting_response(Proto.CommandCode.rs485_baud_rate_resp, data1=0)
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_rs485_baud_rate(Roller485Util.RS485BaudRate.Baud115200)
         assert result is True
@@ -658,7 +658,7 @@ class TestSetPositionAndMaxCurrent:
             data1=expected_pos,
             data2=expected_cur,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_position_and_max_current(position, max_current)
         assert result is True
@@ -682,7 +682,7 @@ class TestSetPositionPid:
             data2=int_i,
             data3=int_d,
         )
-        mock_roller.read.return_value = resp  # type: ignore[union-attr]
+        mock_roller.read.return_value = resp  # type: ignore[attr-defined]
 
         result = mock_roller.set_position_pid(p, i, d)
         assert result is True
