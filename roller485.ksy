@@ -179,7 +179,7 @@ types:
         size: 16
 
   i2c_write_reg_req:
-    doc: 0x61 I2C Register Write リクエストペイロード (24バイト)
+    doc: 0x61 I2C Register Write リクエストペイロード (22バイト)
     seq:
       - id: i2c_address
         type: u1

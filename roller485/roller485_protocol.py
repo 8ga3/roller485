@@ -556,7 +556,7 @@ class Roller485Protocol(ReadWriteKaitaiStruct):
 
 
     class I2cWriteRegReq(ReadWriteKaitaiStruct):
-        """0x61 I2C Register Write リクエストペイロード (24バイト)."""
+        """0x61 I2C Register Write リクエストペイロード (22バイト)."""
         def __init__(self, _io=None, _parent=None, _root=None):
             super(Roller485Protocol.I2cWriteRegReq, self).__init__(_io)
             self._parent = _parent
