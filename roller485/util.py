@@ -203,20 +203,20 @@ class Roller485Util(rs.RS485):
         self._delay()
         return self._setting_resp(Proto.CommandCode.mode_setting_resp, data1=mode.value)
 
-    def remove_protection(self, state: Switch = Switch.On) -> bool:
+    def remove_protection(self, state: int = 1) -> bool:
         """保護解除
 
         Args:
-            state (Switch): 保護解除 1で実行
+            state (int): 保護解除ステータス (0〜255にクリッピングされる)
 
         Returns:
             bool: コマンドが成功したかどうか
         """
-        self._setting(Proto.CommandCode.remove_protection, data1=0, data2=state.value)
+        state = max(0, min(255, state))
+        self._setting(Proto.CommandCode.remove_protection, data1=0, data2=state)
         self._delay()
-        # 保護解除のレスポンスは常にdata2=0(解除成功)
         return self._setting_resp(
-            Proto.CommandCode.remove_protection_resp, data1=0, data2=0
+            Proto.CommandCode.remove_protection_resp, data1=0, data2=state
         )
 
     def save_to_flash(self) -> bool:
@@ -344,11 +344,11 @@ class Roller485Util(rs.RS485):
         Returns:
             bool: コマンドが成功したかどうか
         """
-        enable = 1 if enable else 0
-        self._setting(Proto.CommandCode.motor_jam_protection, data1=enable)
+        flag = 1 if enable else 0
+        self._setting(Proto.CommandCode.motor_jam_protection, data1=flag)
         self._delay()
         return self._setting_resp(
-            Proto.CommandCode.motor_jam_protection_resp, data1=enable
+            Proto.CommandCode.motor_jam_protection_resp, data1=flag
         )
 
     def set_motor_position_over_range_protection(self, enable: bool) -> bool:
@@ -364,13 +364,13 @@ class Roller485Util(rs.RS485):
         Returns:
             bool: コマンドが成功したかどうか
         """
-        enable = 1 if enable else 0
+        flag = 1 if enable else 0
         self._setting(
-            Proto.CommandCode.motor_position_over_range_protection, data1=enable
+            Proto.CommandCode.motor_position_over_range_protection, data1=flag
         )
         self._delay()
         return self._setting_resp(
-            Proto.CommandCode.motor_position_over_range_protection_resp, data1=enable
+            Proto.CommandCode.motor_position_over_range_protection_resp, data1=flag
         )
 
     def set_speed_and_max_current(self, speed: int, max_current: float) -> bool:

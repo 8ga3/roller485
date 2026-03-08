@@ -42,58 +42,58 @@ roller485 --port /dev/ttyUSB0 motor-switch off
 
 #### 共通オプション
 
-| オプション | デフォルト | 説明 |
-|---|---|---|
-| `--port` | (必須) | シリアルポート (例: `/dev/ttyUSB0`, `/dev/tty.usbserial-10`) |
-| `--target` | `0` | デバイスID |
-| `--baudrate` | `115200` | ボーレート |
-| `--timeout` | `1.0` | タイムアウト (秒) |
+| オプション   | デフォルト | 説明                                                         |
+| ------------ | ---------- | ------------------------------------------------------------ |
+| `--port`     | (必須)     | シリアルポート (例: `/dev/ttyUSB0`, `/dev/tty.usbserial-10`) |
+| `--target`   | `0`        | デバイスID                                                   |
+| `--baudrate` | `115200`   | ボーレート                                                   |
+| `--timeout`  | `1.0`      | タイムアウト (秒)                                            |
 
 #### コマンド一覧
 
 **設定コマンド:**
 
-| コマンド | 説明 |
-|---|---|
-| `motor-switch <on\|off>` | モーターの ON/OFF |
-| `mode-setting <speed\|position\|current\|encoder>` | モーターモード設定 (フラッシュ保存) |
-| `save-to-flash` | フラッシュメモリに保存 |
-| `set-encoder <value>` | エンコーダの設定 |
-| `button-switching-mode <on\|off>` | ボタン切替モード設定（onで5秒間長押しでランニングモードに切り替え） |
-| `rgb-led-control [--r R] [--g G] [--b B] [--mode MODE] [--brightness BRI]` | RGB LED 制御 (フラッシュ保存) |
-| `set-rs485-baud-rate <115200\|19200\|9600>` | RS485 ボーレート設定 (フラッシュ保存) |
-| `set-device-id <id>` | デバイスID 設定 (フラッシュ保存) |
-| `set-motor-jam-protection <on\|off>` | モータジャム保護設定 |
-| `remove-protection` | 保護解除 |
-| `set-motor-position-over-range-protection <on\|off>` | 位置オーバーレンジ保護設定 (フラッシュ保存) |
+| コマンド                                                                    | 説明                                                                |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `motor-switch <on\|off>`                                                    | モーターの ON/OFF                                                   |
+| `mode-setting <speed\|position\|current\|encoder>`                          | モーターモード設定 (フラッシュ保存)                                 |
+| `save-to-flash`                                                             | フラッシュメモリに保存                                              |
+| `set-encoder <value>`                                                       | エンコーダの設定                                                    |
+| `button-switching-mode <on\|off>`                                           | ボタン切替モード設定（onで5秒間長押しでランニングモードに切り替え） |
+| `rgb-led-control [--r R] [--g G] [--b B] [--mode MODE] [--brightness BRI]`  | RGB LED 制御 (フラッシュ保存)                                       |
+| `set-rs485-baud-rate <115200\|19200\|9600>`                                 | RS485 ボーレート設定 (フラッシュ保存)                               |
+| `set-device-id <id>`                                                        | デバイスID 設定 (フラッシュ保存)                                    |
+| `set-motor-jam-protection <on\|off>`                                        | モータジャム保護設定                                                |
+| `remove-protection`                                                         | 保護解除                                                            |
+| `set-motor-position-over-range-protection <on\|off>`                        | 位置オーバーレンジ保護設定 (フラッシュ保存)                         |
 
 **制御コマンド:**
 
-| コマンド | 説明 |
-|---|---|
-| `set-speed-and-max-current <speed> <max_current>` | 速度と最大電流の設定 |
-| `set-speed-pid <p> <i> <d>` | 速度 PID 設定 (フラッシュ保存) |
-| `set-position-and-max-current <position> <max_current>` | 位置と最大電流の設定 |
-| `set-position-pid <p> <i> <d>` | 位置 PID 設定 (フラッシュ保存) |
-| `set-current <current>` | 電流の設定 |
+| コマンド                                                | 説明                           |
+| ------------------------------------------------------- | ------------------------------ |
+| `set-speed-and-max-current <speed> <max_current>`       | 速度と最大電流の設定           |
+| `set-speed-pid <p> <i> <d>`                             | 速度 PID 設定 (フラッシュ保存) |
+| `set-position-and-max-current <position> <max_current>` | 位置と最大電流の設定           |
+| `set-position-pid <p> <i> <d>`                          | 位置 PID 設定 (フラッシュ保存) |
+| `set-current <current>`                                 | 電流の設定                     |
 
 **ステータス読み出しコマンド:**
 
-| コマンド | 説明 |
-|---|---|
-| `get-motor-status` | モーターステータスの取得 |
-| `get-other-status` | その他ステータスの取得 |
-| `get-speed-pid-and-rgb` | 速度 PID と RGB の取得 |
-| `get-position-pid-and-other` | 位置 PID とその他の取得 |
+| コマンド                       | 説明                         |
+| ------------------------------ | ---------------------------- |
+| `get-motor-status`             | モーターステータスの取得     |
+| `get-other-status`             | その他ステータスの取得       |
+| `get-speed-pid-and-rgb`        | 速度 PID と RGB の取得       |
+| `get-position-pid-and-other`   | 位置 PID とその他の取得      |
 
 **I2C 転送コマンド:**
 
-| コマンド | 説明 |
-|---|---|
-| `read-i2c <addr> <reg_len> <reg_addr> <data_len>` | I2C レジスタ読み取り |
-| `write-i2c <addr> <reg_len> <reg_addr> <data_hex>` | I2C レジスタ書き込み |
-| `read-i2c-raw <addr> <data_len>` | I2C ローデータ読み取り |
-| `write-i2c-raw <addr> <stop_bit> <data_hex>` | I2C ローデータ書き込み |
+| コマンド                                             | 説明                     |
+| ---------------------------------------------------- | ------------------------ |
+| `read-i2c <addr> <reg_len> <reg_addr> <data_len>`    | I2C レジスタ読み取り     |
+| `write-i2c <addr> <reg_len> <reg_addr> <data_hex>`   | I2C レジスタ書き込み     |
+| `read-i2c-raw <addr> <data_len>`                     | I2C ローデータ読み取り   |
+| `write-i2c-raw <addr> <stop_bit> <data_hex>`         | I2C ローデータ書き込み   |
 
 ### Python API
 

@@ -21,3 +21,13 @@ testpaths = ["tests"]
 
 [project.scripts]
 roller485 = "roller485.cli:main"
+
+[tool.mypy]
+exclude = ["examples/", 'roller485/roller485_protocol\.py']
+
+[[tool.mypy.overrides]]
+module = "kaitaistruct"
+ignore_missing_imports = true
+
+[tool.ruff]
+exclude = ["roller485/roller485_protocol.py"]

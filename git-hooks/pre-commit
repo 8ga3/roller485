@@ -21,8 +21,16 @@ if ! check_hooks_diff; then
     exit 1
 fi
 
-# Get list of staged Python files
+# pre-commit チェックから除外するファイル（1行1パターン、grep -v に渡される）
+EXCLUDE_PATTERNS="
+roller485/roller485_protocol\.py
+"
+
+# Get list of staged Python files (exclude generated files)
 STAGED_PY_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+for pattern in $EXCLUDE_PATTERNS; do
+    STAGED_PY_FILES=$(echo "$STAGED_PY_FILES" | grep -v "$pattern" || true)
+done
 
 if [ -z "$STAGED_PY_FILES" ]; then
     echo "No Python files staged for commit."

@@ -190,7 +190,7 @@ types:
       - id: data_length
         type: u1
       - id: reserve
-        size: 3
+        size: 1
       - id: data
         size: 16
 
