@@ -23,7 +23,7 @@ testpaths = ["tests"]
 roller485 = "roller485.cli:main"
 
 [tool.mypy]
-exclude = ["examples/", 'roller485/roller485_protocol\.py']
+exclude = "(^examples/|^roller485/roller485_protocol\\.py$)"
 
 [[tool.mypy.overrides]]
 module = "kaitaistruct"
